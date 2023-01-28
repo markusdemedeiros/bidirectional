@@ -1,7 +1,7 @@
 use std::{collections::BTreeMap, fmt, rc::Rc};
 
 #[derive(PartialEq, Eq, Clone)]
-pub(crate) enum STLCBTerm {
+pub enum STLCBTerm {
     Var(String),
     App(Rc<STLCBTerm>, Rc<STLCBTerm>),
     Lam(String, Rc<STLCBTerm>),
@@ -12,7 +12,7 @@ pub(crate) enum STLCBTerm {
 }
 
 #[derive(PartialEq, Eq, Clone)]
-pub(crate) enum STLCBType {
+pub enum STLCBType {
     Bool,
     Function(Rc<STLCBType>, Rc<STLCBType>),
 }

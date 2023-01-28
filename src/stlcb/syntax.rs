@@ -72,3 +72,10 @@ macro_rules! stlcb_term {
         $ex
     };
 }
+
+#[cfg(test)]
+mod macro_tests {
+    fn test() {
+        assert_eq!(1 + 1, 2);
+    }
+}

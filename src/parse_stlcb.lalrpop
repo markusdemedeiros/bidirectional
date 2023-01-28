@@ -1,0 +1,56 @@
+use std::str::FromStr;
+use std::rc::Rc;
+use crate::STLCBTerm;
+use crate::STLCBType;
+
+grammar;
+
+Expr: Rc<STLCBTerm> = {
+    #[precedence(level="1")]
+    "False" => Rc::new(STLCBTerm::False),
+
+    #[precedence(level="1")]
+    "True" => Rc::new(STLCBTerm::True),
+
+    #[precedence(level="1")]
+    "(" "if" <cond: Term> "then" <ctrue: Term> "else" <cfalse: Term> ")" => Rc::new(STLCBTerm::If(cond, ctrue, cfalse)),
+
+    #[precedence(level="1")]
+    "(" "lambda" <v: Identifier> "." <body: Term> ")" => Rc::new(STLCBTerm::Lam(v, body)),
+
+    #[precedence(level="2")]
+    "(" <t: Term> ":" <y: Type> ")" => Rc::new(STLCBTerm::Ann(t, y)),
+
+    #[precedence(level="3")]
+    <v: Identifier> => Rc::new(STLCBTerm::Var(v)),
+};
+
+pub Term: Rc<STLCBTerm> = {
+    #[precedence(level="1")]
+    <e: Expr> => e,
+
+    #[precedence(level="2")]
+    "(" <e: Expr> ")" => e,
+
+    #[precedence(level="11")]
+    #[assoc(side="right")]
+    <rator: Term> <rand: Term> => Rc::new(STLCBTerm::App(rator, rand)),
+};
+
+
+pub Type: Rc<STLCBType> = {
+    #[precedence(level="1")]
+    "Bool" => Rc::new(STLCBType::Bool),
+
+    #[precedence(level="2")]
+    "(" <Type> ")",
+
+    #[precedence(level="3")]
+    #[assoc(side="right")]
+    <t1: Type> "->" <t2: Type> => Rc::new(STLCBType::Function(t1, t2)),
+};
+
+
+Identifier: String = {
+    r"[a-zA-Z][a-zA-Z0-9]*" => <>.to_string()
+};
